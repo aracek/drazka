@@ -1,0 +1,82 @@
+---
+// Tlačítko, které se při stisknutí fyzicky promáčkne: horní plocha a pod ní tmavší hrana.
+// Inspirováno studií Tactile Button od JP (dqnamo.com/kitchen), postaveno po svém.
+interface Props {
+  href: string;
+}
+const { href } = Astro.props;
+---
+
+<a class="tactile" href={href}>
+  <span class="tactile-face">
+    <slot />
+    <svg class="tactile-arrow" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M3 8h9.5M8.5 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </span>
+</a>
+
+<style>
+  .tactile {
+    --depth: 5px;
+    position: relative;
+    display: inline-block;
+    margin-top: var(--depth);
+    border-radius: 16px;
+    background: var(--accent-deep);
+    text-decoration: none;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.6),
+      0 14px 26px -12px rgb(120 38 14 / 0.6);
+    transition: box-shadow 0.15s var(--ease);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .tactile-face {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 22px 15px 24px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ea6a48 0%, var(--accent) 55%, #d84a29 100%);
+    color: #fff8f1;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    text-shadow: 0 1px 0 rgb(90 25 8 / 0.25);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.38),
+      inset 0 -1px 0 rgb(80 20 5 / 0.12);
+    transform: translateY(calc(-1 * var(--depth)));
+    transition: transform 0.15s var(--ease);
+  }
+
+  .tactile-arrow {
+    transition: transform 0.35s var(--ease);
+  }
+
+  .tactile:hover .tactile-face {
+    transform: translateY(calc(-1 * var(--depth) - 1px));
+  }
+
+  .tactile:hover .tactile-arrow {
+    transform: translateX(3px);
+  }
+
+  .tactile:active {
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.6),
+      0 6px 12px -8px rgb(120 38 14 / 0.6);
+  }
+
+  .tactile:active .tactile-face {
+    transform: translateY(-1px) scale(0.985);
+    transition-duration: 0.08s;
+  }
+
+  .tactile:focus-visible {
+    outline-offset: 4px;
+    border-radius: 16px;
+  }
+</style>

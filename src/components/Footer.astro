@@ -1,0 +1,69 @@
+---
+import data from '../data/web.json';
+import { withBase } from '../lib/url';
+import Disc from './Disc.astro';
+---
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <p class="footer-mark"><Disc size={44} /> {data.nazev}</p>
+      <a class="text-link" href={withBase('/admin/')}>Administrace <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+    <div class="footer-notes">
+      <p>{data.nazev} je smyšlená kavárna. Web vznikl jako školní projekt.</p>
+      <p>
+        Vstupenky, známky, měnící se nadpis a tlačítko jsou inspirované studiemi{' '}
+        <a href="https://dqnamo.com/kitchen" rel="noopener">Kitchen od JP</a>. Fotky jsou vygenerované.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding-block: clamp(56px, 8vw, 96px) 40px;
+  }
+
+  .footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgb(244 239 230 / 0.14);
+  }
+
+  .footer-mark {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--serif);
+    font-size: clamp(3rem, 9vw, 6rem);
+    font-weight: 380;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  /* na tmavém pozadí potřebuje deska světlejší okraj */
+  .footer-mark :global(svg circle:first-child) {
+    fill: #2e2a24;
+    stroke: rgb(244 239 230 / 0.18);
+    stroke-width: 0.8;
+  }
+
+  .footer-notes {
+    display: grid;
+    gap: 6px;
+    padding-top: 24px;
+    font-size: 14px;
+    color: rgb(244 239 230 / 0.6);
+  }
+
+  .footer-notes a {
+    color: var(--paper);
+  }
+</style>

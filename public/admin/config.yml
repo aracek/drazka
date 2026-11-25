@@ -1,0 +1,159 @@
+# Administrace webu Drážka (Sveltia CMS)
+# Všechno, co se tady uloží, se zapíše do repozitáře na GitHubu
+# a web se sám znovu sestaví a nahraje (trvá to asi minutu).
+
+backend:
+  name: github
+  repo: aracek/drazka
+  branch: main
+  commit_messages:
+    create: 'Administrace: přidáno {{collection}} „{{slug}}“'
+    update: 'Administrace: upraveno {{collection}} „{{slug}}“'
+    delete: 'Administrace: smazáno {{collection}} „{{slug}}“'
+    uploadMedia: 'Administrace: nahraná fotka {{path}}'
+    deleteMedia: 'Administrace: smazaná fotka {{path}}'
+
+site_url: https://aracek.github.io/drazka/
+display_url: https://aracek.github.io/drazka/
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: '-'
+
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: menu
+    label: Menu
+    label_singular: položku menu
+    description: Nápoje a jídlo s cenami. Kategorie určuje, ve kterém sloupci se položka ukáže.
+    folder: src/content/menu
+    extension: yml
+    format: yml
+    create: true
+    delete: true
+    identifier_field: nazev
+    slug: '{{nazev}}'
+    summary: '{{nazev}} · {{cena}} Kč'
+    sortable_fields: [kategorie, nazev, cena]
+    fields:
+      - { name: nazev, label: Název, widget: string }
+      - name: kategorie
+        label: Kategorie
+        widget: select
+        options: [Káva, Čaj a další, Sladké, Večer]
+        default: Káva
+      - { name: popis, label: Krátký popis, widget: string, required: false }
+      - { name: cena, label: Cena v Kč, widget: number, value_type: int, min: 0 }
+      - { name: doporucujeme, label: Doporučujeme (štítek Tip), widget: boolean, required: false, default: false }
+      - name: poradi
+        label: Pořadí v kategorii
+        widget: number
+        value_type: int
+        required: false
+        hint: Menší číslo bude výš.
+
+  - name: akce
+    label: Akce
+    label_singular: akci
+    description: Poslechové večery. Na webu se ukážou jako vstupenky. Akce, které už proběhly, se samy schovají.
+    folder: src/content/akce
+    extension: yml
+    format: yml
+    create: true
+    delete: true
+    identifier_field: nazev
+    slug: '{{nazev}}'
+    summary: '{{datum}} · {{nazev}}'
+    sortable_fields: [datum, nazev]
+    fields:
+      - { name: nazev, label: Název akce, widget: string }
+      - name: datum
+        label: Datum
+        widget: datetime
+        time_format: false
+        format: YYYY-MM-DD
+      - name: cas
+        label: Začátek
+        widget: string
+        default: '19:00'
+        hint: Ve tvaru 19:00
+        pattern: ['^\d{1,2}:\d{2}$', 'Napiš čas ve tvaru 19:00']
+      - name: vstupne
+        label: Vstupné v Kč
+        widget: number
+        value_type: int
+        min: 0
+        default: 0
+        hint: 0 znamená vstup zdarma.
+      - { name: popis, label: Popis, widget: text, required: false }
+
+  - name: galerie
+    label: Galerie
+    label_singular: fotku
+    description: Fotky na webu v rámečku poštovní známky. Nejlépe na výšku (4 ku 5).
+    folder: src/content/galerie
+    extension: yml
+    format: yml
+    create: true
+    delete: true
+    identifier_field: popisek
+    slug: '{{popisek}}'
+    summary: '{{popisek}}'
+    sortable_fields: [poradi, popisek]
+    fields:
+      - { name: foto, label: Fotka, widget: image }
+      - { name: popisek, label: Popisek, widget: string }
+      - name: poradi
+        label: Pořadí
+        widget: number
+        value_type: int
+        required: false
+        hint: Menší číslo bude dřív.
+
+  - name: nastaveni
+    label: Kavárna
+    description: Název, texty na úvodní stránce, kontakt a otevírací doba.
+    files:
+      - name: web
+        label: Základní údaje
+        file: src/data/web.json
+        format: json
+        fields:
+          - { name: nazev, label: Název kavárny, widget: string }
+          - { name: podtitul, label: Podtitul, widget: string }
+          - name: slova
+            label: Slova v nadpisu
+            hint: Nadpis zní „Káva, desky a …“ a tahle slova se v něm střídají. Ideálně krátká.
+            widget: list
+            min: 1
+            field: { name: slovo, label: Slovo, widget: string }
+          - { name: uvod, label: Úvodní text, widget: text }
+          - { name: uvodni_foto, label: Úvodní fotka, widget: image }
+          - name: hraje
+            label: Právě hraje
+            widget: object
+            fields:
+              - { name: album, label: Album, widget: string }
+              - { name: interpret, label: Interpret, widget: string }
+          - { name: o_nas, label: Text O nás, widget: text }
+          - { name: adresa, label: Adresa, widget: string }
+          - { name: email, label: E-mail na rezervace, widget: string }
+          - name: oteviraci_doba
+            label: Otevírací doba
+            hint: Sedm dní od pondělí do neděle. Časy ve tvaru 08:00.
+            widget: list
+            allow_add: false
+            allow_remove: false
+            allow_reorder: false
+            summary: '{{fields.den}}'
+            fields:
+              - { name: den, label: Den, widget: string }
+              - { name: zavreno, label: Zavřeno celý den, widget: boolean, required: false, default: false }
+              - { name: od, label: Otevíráme v, widget: string, required: false }
+              - { name: do, label: Zavíráme v, widget: string, required: false }

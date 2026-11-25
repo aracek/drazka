@@ -1,0 +1,27 @@
+---
+// Slovo, které se mění přes krátké „zašifrování“.
+// Inspirováno studií Scramble Text od JP (dqnamo.com/kitchen), napsáno po svém.
+interface Props {
+  words: string[];
+}
+const { words } = Astro.props;
+---
+
+<span class="scramble" data-scramble data-words={JSON.stringify(words)}>
+  <span class="scramble-out" aria-hidden="true" data-scramble-out>{words[0]}</span>
+  <span class="sr-only">{words.join(', ')}</span>
+</span>
+
+<style>
+  .scramble {
+    font-style: italic;
+    font-weight: 330;
+    color: var(--accent-deep);
+  }
+
+  .scramble-out :global(.sc) {
+    color: var(--accent);
+    font-style: normal;
+    opacity: 0.75;
+  }
+</style>

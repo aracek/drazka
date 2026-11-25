@@ -1,0 +1,121 @@
+---
+import data from '../data/web.json';
+import Disc from './Disc.astro';
+---
+
+<header class="site-header" data-header>
+  <div class="wrap header-inner">
+    <a href="#top" class="brand" aria-label={`${data.nazev}, zpět nahoru`}>
+      <Disc class="brand-disc" />
+      <span>{data.nazev}</span>
+    </a>
+    <nav class="nav" aria-label="Hlavní menu">
+      <a href="#menu">Menu</a>
+      <a href="#akce">Akce</a>
+      <a href="#galerie">Galerie</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+    <a
+      href="#kontakt"
+      class="status"
+      data-status
+      data-hours={JSON.stringify(data.oteviraci_doba)}
+    >
+      Otevírací doba
+    </a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s var(--ease);
+  }
+
+  .site-header[data-scrolled] {
+    border-bottom-color: var(--line);
+  }
+
+  .header-inner {
+    height: var(--header);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .brand {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 450;
+    letter-spacing: -0.02em;
+  }
+
+  .brand :global(.brand-disc) {
+    transition: transform 0.6s var(--ease);
+  }
+
+  .brand:hover :global(.brand-disc) {
+    transform: rotate(200deg);
+  }
+
+  .nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav a {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--ink-2);
+    transition:
+      background-color 0.2s var(--ease),
+      color 0.2s var(--ease),
+      transform 0.15s var(--ease);
+  }
+
+  .nav a:hover {
+    background: var(--paper-2);
+    color: var(--ink);
+  }
+
+  .nav a:active {
+    transform: scale(0.97);
+  }
+
+  .status {
+    justify-self: end;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+    text-decoration: none;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .status:hover {
+    color: var(--ink);
+  }
+
+  @media (max-width: 760px) {
+    .header-inner {
+      grid-template-columns: auto 1fr;
+    }
+
+    .nav {
+      display: none;
+    }
+  }
+</style>

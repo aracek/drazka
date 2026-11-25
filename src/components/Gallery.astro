@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import Stamp from './Stamp.astro';
+
+const TILTS = [-2.2, 1.6, -1.1, 2.3, -1.7, 1.2];
+const photos = (await getCollection('galerie'))
+  .map((e) => e.data)
+  .sort((a, b) => a.poradi - b.poradi || a.popisek.localeCompare(b.popisek, 'cs'));
+---
+
+<section id="galerie" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Jak to u nás vypadá</h2>
+      <p>Pár známek z Drážky. Nejlíp to tu ale vypadá v úterý odpoledne, když venku prší.</p>
+    </div>
+
+    <div class="stamps">
+      {photos.map((p, i) => <Stamp foto={p.foto} popisek={p.popisek} tilt={TILTS[i % TILTS.length]} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .stamps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(28px, 5vw, 64px) clamp(24px, 4vw, 56px);
+    padding-inline: clamp(0px, 2vw, 24px);
+  }
+
+  .stamps > :global(:nth-child(3n + 2)) {
+    margin-top: clamp(0px, 5vw, 56px);
+  }
+
+  @media (max-width: 760px) {
+    .stamps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px 18px;
+    }
+
+    .stamps > :global(:nth-child(3n + 2)) {
+      margin-top: 0;
+    }
+
+    .stamps > :global(:nth-child(2n)) {
+      margin-top: 28px;
+    }
+  }
+</style>

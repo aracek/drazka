@@ -1,0 +1,23 @@
+{
+  "nazev": "Drážka",
+  "podtitul": "Kavárna a poslechový bar v Brně",
+  "slova": ["pomalá rána", "dlouhé večery", "strana B", "klid"],
+  "uvod": "Malá kavárna, kde se desky pouštějí celé, od první písničky po poslední. Ráno strana A ke kávě, večer strana B k vínu.",
+  "uvodni_foto": "/images/uploads/kavarna.jpg",
+  "hraje": {
+    "album": "Tichá ulice",
+    "interpret": "Kvartet Pod Lampou"
+  },
+  "o_nas": "Drážku jsme otevřeli pro lidi, kteří mají rádi pomalou kávu a hudbu bez přeskakování. Za pultem stojí gramofon a v regálu přes osm set desek, od jazzu po českou alternativu. Kávu nám praží malá pražírna z Moravy, koláče pečeme každé ráno. Když si přineseš vlastní desku, rádi ji pustíme.",
+  "adresa": "Vinylová 33, Brno",
+  "email": "rezervace@drazka.example",
+  "oteviraci_doba": [
+    { "den": "Pondělí", "zavreno": true },
+    { "den": "Úterý", "od": "08:00", "do": "20:00" },
+    { "den": "Středa", "od": "08:00", "do": "22:00" },
+    { "den": "Čtvrtek", "od": "08:00", "do": "22:00" },
+    { "den": "Pátek", "od": "08:00", "do": "23:00" },
+    { "den": "Sobota", "od": "10:00", "do": "23:00" },
+    { "den": "Neděle", "od": "10:00", "do": "18:00" }
+  ]
+}

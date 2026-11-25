@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import { isoDay, todayInPrague } from '../lib/url';
+import Ticket from './Ticket.astro';
+
+const today = todayInPrague();
+const events = (await getCollection('akce'))
+  .map((e) => ({ ...e.data, datum: isoDay(e.data.datum) }))
+  .filter((e) => e.datum >= today)
+  .sort((a, b) => a.datum.localeCompare(b.datum) || a.cas.localeCompare(b.cas));
+---
+
+<section id="akce" class="section section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Co chystáme</h2>
+      <p>Poslechové večery, kdy se deska pouští celá. Místo si můžeš zarezervovat, ale většinou se vejdeš i bez toho.</p>
+    </div>
+
+    <ul class="tickets" data-tickets>
+      {
+        events.map((e, i) => (
+          <Ticket nazev={e.nazev} datum={e.datum} cas={e.cas} vstupne={e.vstupne} popis={e.popis} tone={i} />
+        ))
+      }
+    </ul>
+    <p class="tickets-empty" data-tickets-empty hidden={events.length > 0}>
+      Zrovna nic nechystáme. Ale gramofon hraje každý den.
+    </p>
+  </div>
+</section>
+
+<style>
+  .tickets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 28px;
+  }
+
+  .tickets-empty {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-style: italic;
+    color: var(--ink-2);
+  }
+
+  @media (max-width: 640px) {
+    .tickets {
+      grid-auto-flow: column;
+      grid-template-columns: none;
+      grid-auto-columns: 78%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 8px var(--gutter) 28px;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .tickets::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tickets > :global(li) {
+      scroll-snap-align: start;
+    }
+  }
+</style>

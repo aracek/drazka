@@ -1,0 +1,80 @@
+---
+// Fotka v rámečku poštovní známky s perforovaným okrajem.
+// Inspirováno studií Stamp od JP (dqnamo.com/kitchen), okraj je tady udělaný maskou z kruhů.
+import { withBase } from '../lib/url';
+
+interface Props {
+  foto: string;
+  popisek: string;
+  tilt: number;
+}
+
+const { foto, popisek, tilt } = Astro.props;
+---
+
+<figure class="stamp-wrap" style={`--tilt: ${tilt}deg`}>
+  <div class="stamp">
+    <img src={withBase(foto)} alt={popisek} width="896" height="1120" loading="lazy" decoding="async" />
+    <figcaption>
+      <span class="stamp-caption">{popisek}</span>
+      <span class="stamp-value" aria-hidden="true">33⅓</span>
+    </figcaption>
+  </div>
+</figure>
+
+<style>
+  .stamp-wrap {
+    margin: 0;
+    filter: drop-shadow(0 1px 1px rgb(30 20 10 / 0.12)) drop-shadow(0 14px 22px rgb(30 20 10 / 0.12));
+    transform: rotate(var(--tilt));
+    transition: transform 0.5s var(--ease);
+  }
+
+  .stamp-wrap:hover {
+    transform: rotate(0deg) translateY(-6px) scale(1.015);
+  }
+
+  .stamp {
+    --r: 6px;
+    padding: calc(var(--r) * 2.4);
+    padding-bottom: calc(var(--r) * 1.6);
+    background: #fbf8f2;
+    -webkit-mask:
+      radial-gradient(var(--r), #0000 96%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)),
+      linear-gradient(#000 0 0) center / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r)) no-repeat;
+    mask:
+      radial-gradient(var(--r), #0000 96%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)),
+      linear-gradient(#000 0 0) center / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r)) no-repeat;
+  }
+
+  .stamp img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    outline: 1px solid rgb(28 25 21 / 0.1);
+    outline-offset: -1px;
+  }
+
+  figcaption {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 2px 2px;
+  }
+
+  .stamp-caption {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  .stamp-value {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent-deep);
+    letter-spacing: -0.02em;
+  }
+</style>

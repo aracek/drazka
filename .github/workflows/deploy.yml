@@ -1,0 +1,68 @@
+name: Nahrát web
+
+# Spustí se po každé změně (i po uložení v administraci) a jde spustit i ručně.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: nahrani-webu
+  cancel-in-progress: true
+
+jobs:
+  github-pages:
+    name: GitHub Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.nasazeni.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Sestavit web
+        run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: nasazeni
+        uses: actions/deploy-pages@v4
+
+  # Nahrání na FTP je vypnuté. Zapne se, když v repozitáři nastavíš
+  # proměnnou FTP_ZAPNUTO na true a tajné údaje FTP_SERVER, FTP_UZIVATEL a FTP_HESLO.
+  # Postup je v README.md.
+  ftp:
+    name: FTP
+    if: ${{ vars.FTP_ZAPNUTO == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Sestavit web
+        run: npm run build
+        env:
+          BASE_PATH: ${{ vars.FTP_ADRESA_WEBU || '/' }}
+      - name: Nahrát na FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_UZIVATEL }}
+          password: ${{ secrets.FTP_HESLO }}
+          local-dir: ./dist/
+          server-dir: ${{ vars.FTP_SLOZKA || './' }}

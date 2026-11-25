@@ -1,0 +1,118 @@
+---
+import { getCollection } from 'astro:content';
+
+const ORDER = ['Káva', 'Čaj a další', 'Sladké', 'Večer'] as const;
+const items = (await getCollection('menu')).map((e) => e.data);
+
+const groups = ORDER.map((kategorie) => ({
+  kategorie,
+  items: items
+    .filter((i) => i.kategorie === kategorie)
+    .sort((a, b) => a.poradi - b.poradi || a.nazev.localeCompare(b.nazev, 'cs')),
+})).filter((g) => g.items.length > 0);
+---
+
+<section id="menu" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Menu</h2>
+      <p>Káva z malé moravské pražírny, sypaný čaj a k večeru víno. Ceny jsou v korunách.</p>
+    </div>
+
+    <div class="menu-grid">
+      {
+        groups.map((g) => (
+          <div class="menu-group">
+            <h3>{g.kategorie}</h3>
+            <ul>
+              {g.items.map((i) => (
+                <li class="menu-item">
+                  <div class="mi-row">
+                    <span class="mi-name">
+                      {i.nazev}
+                      {i.doporucujeme && <span class="mi-tip">Tip</span>}
+                    </span>
+                    <span class="mi-dots" aria-hidden="true" />
+                    <span class="mi-price">{i.cena}&nbsp;Kč</span>
+                  </div>
+                  {i.popis && <p class="mi-desc">{i.popis}</p>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(40px, 6vw, 72px) clamp(40px, 7vw, 96px);
+  }
+
+  .menu-group h3 {
+    font-size: 30px;
+    font-style: italic;
+    font-weight: 340;
+    padding-bottom: 14px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .menu-item {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .mi-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .mi-name {
+    font-weight: 550;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mi-tip {
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--accent-deep);
+    padding: 2px 7px 1px;
+    border-radius: 999px;
+  }
+
+  .mi-dots {
+    flex: 1;
+    min-width: 16px;
+    border-bottom: 1.5px dotted rgb(28 25 21 / 0.28);
+    transform: translateY(-4px);
+  }
+
+  .mi-price {
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .mi-desc {
+    margin-top: 2px;
+    font-size: 15px;
+    color: var(--ink-3);
+  }
+
+  @media (max-width: 760px) {
+    .menu-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
